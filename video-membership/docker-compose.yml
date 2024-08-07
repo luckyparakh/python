@@ -1,0 +1,26 @@
+version: '3.8' 
+networks: 
+  cassandra:
+volumes:
+  db-data:
+services: 
+  cassandra1: 
+    image: cassandra:4.0
+    container_name: cassandra1 
+    hostname: cassandra1 
+    networks: 
+      - cassandra 
+    ports:
+      - "9042:9042" 
+    volumes:
+      - db-data:/var/lib/cassandra
+    deploy: &deploy
+      resources: 
+        limits: 
+          cpus: '0.5' 
+          memory: 3000M
+        reservations: 
+          cpus: '0.25' 
+          memory: 1000M
+    environment: &environment
+        CASSANDRA_CLUSTER_NAME: MyTestCluster

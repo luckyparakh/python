@@ -1,0 +1,10 @@
+fastapi[all]
+uvicorn
+cassandra-driver
+python-dotenv
+pydantic-settings
+email-validator
+argon2-cffi
+pytest
+jinja2
+python-jose[cryptography]

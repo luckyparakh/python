@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+    <title>{% block title %} Video Membership {% endblock %}</title>
+    <body>
+        <header>
+            <h1> Video Membership</h1>
+        </header>
+        <main>
+            {% include 'snippet/nav.html' %}
+            {% block main_content %}Main{% endblock %}
+        </main>
+    </body>
+</html>
