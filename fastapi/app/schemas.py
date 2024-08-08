@@ -13,13 +13,6 @@ class PostCreate(PostBase):
     pass
 
 
-class PostResponse(PostBase):
-    created_at: datetime
-
-    class config:
-        orm_mode = True
-
-
 class UserBase(BaseModel):
     email: EmailStr
     password: str
@@ -32,9 +25,20 @@ class UserResponse(BaseModel):
     class config:
         orm_mode = True
 
+
+class PostResponse(PostBase):
+    created_at: datetime
+    user_id: int
+    user: UserResponse
+
+    class config:
+        orm_mode = True
+
+
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
+
 
 class Token(BaseModel):
     access_token: str
