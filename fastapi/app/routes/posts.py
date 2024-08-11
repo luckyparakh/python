@@ -3,6 +3,7 @@ from .. import models, schemas, outh2
 from ..database import get_db
 from sqlalchemy.orm import Session
 from typing import List, Optional
+from sqlalchemy import func
 
 router = APIRouter(
     prefix="/posts",
@@ -10,9 +11,14 @@ router = APIRouter(
 )
 
 
-@router.get("/", response_model=List[schemas.PostResponse])
-def get_posts(db: Session = Depends(get_db), limit: int = 10,search: Optional[str]=""):
-    records = db.query(models.Posts).filter(models.Posts.title.contains(search)).limit(limit).all()
+@router.get("/", response_model=List[schemas.PostVoteOut])
+def get_posts(db: Session = Depends(get_db), limit: int = 10, search: Optional[str] = ""):
+    # records = db.query(models.Posts).filter(
+    #     models.Posts.title.contains(search)).limit(limit).all()
+    # SELECT postsa.*, count(votes.post_id) as votes FROM public.postsa left join votes on postsa.id=votes.post_id group by postsa.id;
+
+    records = db.query(models.Posts, func.count(models.Votes.post_id).label("votes")).join(
+        models.Votes, models.Posts.id == models.Votes.post_id, isouter=True).filter(models.Posts.title.contains(search)).group_by(models.Posts.id).limit(limit).all()
     return records  # FastAPI will automatically convert this to JSON
 
 
@@ -27,9 +33,11 @@ def create_post(payload: schemas.PostCreate, db: Session = Depends(get_db), logg
     return new_post
 
 
-@router.get("/{post_id}", response_model=schemas.PostResponse)
+@router.get("/{post_id}", response_model=schemas.PostVoteOut)
 def get_post(post_id: int, db: Session = Depends(get_db)):
-    post = db.query(models.Posts).filter(models.Posts.id == post_id).first()
+    # post = db.query(models.Posts).filter(models.Posts.id == post_id).first()
+    post = db.query(models.Posts, func.count(models.Votes.post_id).label("votes")).join(
+        models.Votes, models.Posts.id == models.Votes.post_id, isouter=True).filter(models.Posts.id == post_id).group_by(models.Posts.id).first()
     if not post:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f"Post with id: {post_id} not found")

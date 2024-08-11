@@ -7,3 +7,4 @@
 6.  pip install "psycopg" 
 7.  pip install "passlib[bcrypt]"
 8.  pip install pyjwt
+9.  pip install alembic

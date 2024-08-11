@@ -1,6 +1,6 @@
 from pydantic import BaseModel, EmailStr
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Literal
 
 
 class PostBase(BaseModel):
@@ -35,6 +35,14 @@ class PostResponse(PostBase):
         orm_mode = True
 
 
+class PostVoteOut(BaseModel):
+    Posts: PostResponse
+    votes: int
+
+    class config:
+        orm_mode = True
+
+
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
@@ -47,3 +55,13 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     id: Optional[int]
+
+
+class VoteBase(BaseModel):
+    post_id: int
+    vote_direction: Literal[-1, 1]
+
+
+class VoteResponse(BaseModel):
+    post_id: int
+    user_id: int
